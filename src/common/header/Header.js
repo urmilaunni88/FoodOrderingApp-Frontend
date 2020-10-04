@@ -126,8 +126,22 @@ class Header extends Component {
 
   openModalHandler = () => {
     this.setState({ modalIsOpen: true });
+    this.setState({ loginContactno: "" });
+    this.setState({ loginpassword: "" });
+    this.setState({ firstname: "" });
+    this.setState({ lastname: "" });
+    this.setState({ email: "" });
+    this.setState({ password: "" });
+    this.setState({ contactno: "" });
     this.setState({ loginContactnoRequired: "dispNone" });
+    this.setState({loginpasswordRequired: "dispNone"});
+    this.setState({firstnameRequired: "dispNone"});
+    this.setState({lastnameRequired:"dispNone"});
+    this.setState({emailRequired: "dispNone"});
+    this.setState({passwordRequired: "dispNone"});
+    this.setState({contactnoRequired: "dispNone"});
     this.setState({ value: 0 });
+
   };
 
   closeModalHandler = () => {
@@ -444,6 +458,7 @@ profileClickHandler = () => {
                 <Input
                   id="loginContactno"
                   type="text"
+                  value={this.state.loginContactno}
                   className={this.state.loginContactno}
                   onChange={this.inputLoginContactnoHandler}
                 />
@@ -457,7 +472,8 @@ profileClickHandler = () => {
                 <Input
                   id="loginpassword"
                   type="password"
-                  className={this.state.password}
+                  defaultValue={this.state.loginpassword}
+                  className={this.state.loginpassword}
                   onChange={this.inputLoginpasswordHandler}
                 />
                 <FormHelperText className={this.state.loginpasswordRequired}>
@@ -481,6 +497,7 @@ profileClickHandler = () => {
                 <Input
                   id="firstname"
                   type="text"
+                  value={this.state.firstname}                 
                   className={this.state.firstname}
                   onChange={this.inputFirstnameHandler}
                 />
@@ -494,6 +511,7 @@ profileClickHandler = () => {
                 <Input
                   id="lastname"
                   type="text"
+                  value={this.state.lastname}
                   className={this.state.lastname}
                   onChange={this.inputLastnameHandler}
                 />
@@ -504,6 +522,7 @@ profileClickHandler = () => {
                 <Input
                   id="email"
                   type="email"
+                  value={this.state.email}
                   className={this.state.email}
                   onChange={this.inputEmailHandler}
                 />
@@ -517,6 +536,7 @@ profileClickHandler = () => {
                 <Input
                   id="password"
                   type="password"
+                  defaultValue={this.state.password}
                   className={this.state.password}
                   onChange={this.inputPasswordHandler}
                 />
@@ -530,6 +550,7 @@ profileClickHandler = () => {
                 <Input
                   id="contactno"
                   type="text"
+                  value={this.state.contactno}
                   className={this.state.contactno}
                   onChange={this.inputContactnoHandler}
                 />
