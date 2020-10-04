@@ -8,7 +8,8 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-
+import StarIcon from '@material-ui/icons/Star';
+import './Home.css';
 const styles = theme => ({
     media: {
       height: 140
@@ -52,6 +53,7 @@ class Home extends Component {
 
     applyFilter = (e) => {
         // Getting search filed value and converting to lowercase to match with array
+        console.log("Search ",e.target.value);
         const _searchText = (e.target.value).toLowerCase();
         // Stringify and parsing json of restaurant list to avoid reference
         let _restaurants = JSON.parse(JSON.stringify(this.state.restaurants));
@@ -69,42 +71,74 @@ class Home extends Component {
         }
     }
 
+    filterRestaurant = (e) => {
+        
+        let dataSearch=null;
+        let xhrSearch = new XMLHttpRequest();
+        let that = this;
+        let search=(e.target.value).replaceAll(" ","");
+        if(e.target.value===""){
+            this.setState({
+                filteredRestaurants: this.state.restaurants,
+            }); 
+        }
+        else{
+                xhrSearch.addEventListener("readystatechange", function () {
+                    if (this.readyState === 4) {
+                        if (xhrSearch.status === 200 || xhrSearch.status === 201){
+                            const data = JSON.parse(this.responseText).restaurants;
+                            that.setState({
+                                filteredRestaurants: data,
+                            }); 
+            
+                        }
+                    }
+                });
+            
+                xhrSearch.open("GET", "http://localhost:8080/api/restaurant/name/"+search);
+                xhrSearch.setRequestHeader("Content-Type", "application/json");
+                xhrSearch.setRequestHeader("Cache-Control", "no-cache");
+                xhrSearch.send(dataSearch);
+            }
+      };
+
 
     render() {
         const { classes } = this.props;
         return (
             <div>
-                 <Header baseUrl={this.props.baseUrl} searchChangeHandler={this.applyFilter}/>
+                 <Header baseUrl={this.props.baseUrl} onChange={this.filterRestaurant}/>
                  <Container fixed style={{ 'margin':16}}>
                  {this.state.filteredRestaurants.length > 0 ? (
                     <Grid container spacing={3}>
                         {(this.state.filteredRestaurants ).map((restaurant, index) => (
                             <Grid item xs={6} sm={3} key={restaurant.id} >
                             <Card onClick={this.restaurantClickHandler.bind(this,restaurant.id)} >
-                                <CardActionArea>
+                                
                                     <CardMedia
                                     className={classes.media}
                                     image={restaurant.photo_URL}
                                     title={restaurant.restaurant_name}
                                     />
                                     <CardContent>
-                                    <Typography gutterBottom variant="h5" component="h2" style={{minHeight:70}}>
+                                    <Typography gutterBottom variant="h5" color="textPrimary" style={{minHeight:50}}>
                                             {restaurant.restaurant_name}
                                     </Typography>
-                                    <Typography variant="body2" color="textSecondary" component="p" style={{marginBottom:8}}>
+                                    <Typography variant="body2" color="textSecondary" component="p" style={{marginBottom:8,textOverflow:"inherit",overflow:"hidden",width:"300px"}}>
                                         {restaurant.categories}
-                                    </Typography>
+                                    </Typography> <br/>                                   
                                     <div className="card-footer">
-                                        <div className="card-footer-rating">
-                                             <i className="fa fa-star"></i><span style={{marginLeft:4}}>{restaurant.customer_rating} ({restaurant.number_customers_rated})</span> 
-                                        </div>
-                                        <div> 
-                                        <i className="fa fa-inr"></i>{restaurant.average_price} for two
-                                        </div>
-                                    </div>
+                                        <span className="card-footer-rating">
+                                             <StarIcon/>
+                                             <span style={{marginLeft:4}}>{restaurant.customer_rating} ({restaurant.number_customers_rated})</span>
+                                        </span>                                     
+                                        <span id="rupee"> 
+                                            <i className="fa fa-inr"></i>{restaurant.average_price} for two
+                                        </span>
+                                    </div>  
                                     
                                     </CardContent>
-                                </CardActionArea>                      
+                                                    
                             </Card>
                             </Grid>  
                         ))}

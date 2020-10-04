@@ -88,7 +88,7 @@ class Header extends Component {
     this.state = {
       modalIsOpen: false,
       loginContactnoRequired: "dispNone",
-      value: 1,
+      value: 0,
       loginContactno: "",
       loginContactnoRequired: "dispNone",
       loginContactnoError: "",
@@ -109,9 +109,9 @@ class Header extends Component {
       contactnoRequired: "dispNone",
       contactnoError: "",
       signupSuccess: false,
-      loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+      loggedIn: sessionStorage.getItem("login") === "null" ? false: true,
       loggedInFirstName:
-        sessionStorage.getItem("login") == null
+        sessionStorage.getItem("login") === "null"
           ? ""
           : sessionStorage.getItem("login"),
       loggedInLastName: "",
@@ -127,7 +127,7 @@ class Header extends Component {
   openModalHandler = () => {
     this.setState({ modalIsOpen: true });
     this.setState({ loginContactnoRequired: "dispNone" });
-    this.setState({ value: 1 });
+    this.setState({ value: 0 });
   };
 
   closeModalHandler = () => {
@@ -178,15 +178,17 @@ class Header extends Component {
                 let loginData = JSON.parse(this.responseText);
                 sessionStorage.setItem("uuid", JSON.parse(this.responseText).id);
                 sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
-                sessionStorage.setItem("login", loginData.first_name);
-
                 that.setState({
-                    loggedIn: true,
-                    loggedInFirstName: loginData.first_name
-                });
+                  loggedIn: true,
+                  loggedInFirstName: loginData.first_name
+              });
+
+                sessionStorage.setItem("login", loginData.first_name);
                 that.snackBarHandler("Logged in successfully!");
 
                 that.closeModalHandler();
+                
+                
             } else {
                 that.setState({loginpasswordRequired: "dispBlock"});
                 that.setState({loginpasswordError: JSON.parse(this.responseText).message});
@@ -324,6 +326,28 @@ class Header extends Component {
     this.setState({ snackBarOpen: true});
 };
 
+handleMenuClose = () => {
+  this.setState({ anchorEl: null });
+};
+
+handleMenuClick = (event) => {
+  this.setState({ anchorEl: event.currentTarget });
+
+};
+
+handleLogOut = () => {''
+  this.setState({loggedIn : false});
+  this.setState({ anchorEl: null });
+  sessionStorage.setItem("login",null);
+};
+
+profileClickHandler = () => {
+  this.props.history.push("/profile");
+}
+
+
+
+
   render() {
     return (
       <div>
@@ -346,28 +370,46 @@ class Header extends Component {
                   className="searchField"
                   type="text"
                   placeholder="Search by Restaurant Name"
+                  onChange={this.props.onChange}                 
                 />
               </div>
             </Grid>
 
             <Grid item xs={12} sm>
               <div className="login">
-              {this.state.loggedIn ? 
-              <div>
-                  <Button className="loggedInButton" disableRipple={true} varient='text' aria-owns={this.state.anchorEl ? 'simple-menu' : undefined}
+              {this.state.loggedIn ?              
+              <div id="loginMenu">               
+                  <Button className="loggedInButton" disableRipple={true} varient='text' aria-owns={this.state.anchorEl? 'simple-menu' : undefined}
                                     aria-haspopup="true" onClick={this.handleMenuClick}>
                                         <AccountCircle className="account-circle" style={{marginRight:4}}/> {this.state.loggedInFirstName}
                                     </Button>
-                                    <StyledMenu id="simple-menu" anchorEl={this.state.anchorEl} open={Boolean(this.state.anchorEl)} onClose={this.handleMenuClose.bind(this,'')}>
-                                        <StyledMenuItem className="menu-item" onClick={this.handleMenuClose.bind(this,'profile')}>
-                                        <ListItemText primary="My Profile" />
-                                        </StyledMenuItem> 
+                                    <Menu className="simple-menu"                             
+                                     elevation={0}
+                                    getContentAnchorEl={null}
+                                    anchorEl={this.state.anchorEl}
+                                    anchorOrigin={{
+                                      vertical: 'bottom',
+                                      horizontal: 'center',
+                                  }}
+                                  transformOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'center',
+                                  }}
+                                  keepMounted
+                                     open={Boolean(this.state.anchorEl)}
+                                    onClose={this.handleMenuClose}
+                                    > 
+                                    <div className="menubg">
+                                        <MenuItem className="menu-item" onClick={this.profileClickHandler}>
+                                          My Profile
+                                        </MenuItem> 
                                         
-                                        <StyledMenuItem className="menu-item" onClick={this.handleMenuClose.bind(this, 'logout')}>
-                                        <ListItemText primary="Logout" />
-                                        </StyledMenuItem> 
-                                    </StyledMenu>
-                                    </div> :
+                                        <MenuItem className="menu-item" onClick={this.handleLogOut}>
+                                          Logout
+                                        </MenuItem> 
+                                    </div>
+                                    </Menu>
+                </div> :
                 <Button
                   variant="contained"
                   color="default"
@@ -390,7 +432,7 @@ class Header extends Component {
           style={customStyles}
           contentLabel="LOGIN"
         >
-          <Tabs className="tabs" value={this.state.value} variant="fullWidth">
+          <Tabs className="tabs" value={this.state.value} onChange={this.tabChangeHandler} variant="fullWidth">
             <Tab label="LOGIN" />
             <Tab label="SIGNUP" />
           </Tabs>

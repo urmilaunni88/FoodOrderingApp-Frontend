@@ -5,8 +5,8 @@ class Profile extends Component {
     render() {
         return (
         <div>
-            <Header baseUrl={this.props.baseUrl} searchChangeHandler={this.applyFilter}/>
-            This is Profile Page
+{/*             <Header baseUrl={this.props.baseUrl} searchChangeHandler={this.applyFilter}/>
+ */}            This is Profile Page
         </div>
         )
     }

@@ -74,3 +74,16 @@
 ::-webkit-input-placeholder {
     text-align: center;
 }
+
+.menubg{
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    height: 90px;
+    box-shadow:  outset 0px 0px 5px grey;
+}
+#loginMenu{
+    padding: 0px;
+}
+
